@@ -1,0 +1,223 @@
+// *---------------------------------------------- CSS VARIABLES -----------------------------------------------------------------------* //
+$primary-font: "Press Start 2P", cursive;
+$secondary-font: "Raleway", sans-serif;
+
+$color-yellow: #ffae00;
+$color-dark-grey: #666666;
+$color-light-grey: #eeeeee;
+$color-green: #6cc332;
+$color-red: #a30101;
+
+$common-box-shadow: 0 0.25rem 1rem rgba(#000, 0.25),
+  0 -0.25rem 1rem rgba(#fff, 0.25);
+
+// *---------------------------------------------- MIXIN  -----------------------------------------------------------------------* //
+@mixin flexbox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin word-styling($size, $background-color, $color) {
+  box-shadow: 0 0.5rem 0.15rem rgba($color-dark-grey, 0.05) inset,
+    0 -0.5rem 0.1rem rgba(#fff, 0.15) inset,
+    0.5rem 0.25rem 1rem rgba(#000, 0.25), -0.5rem -0.25rem 1rem rgba(#fff, 0.25);
+  border-radius: 1rem;
+  font-size: 2rem;
+  margin: 0.5rem;
+  font-weight: bolder;
+  font-family: $primary-font;
+  width: $size;
+  height: $size;
+  background-color: $background-color;
+  color: $color;
+}
+
+@mixin different-color-word($background-color) {
+  background-color: $background-color;
+  box-shadow: $common-box-shadow;
+}
+
+// *---------------------------------------------- Base -----------------------------------------------------------------------* //
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: $secondary-font;
+  font-size: 1.6rem;
+  line-height: 1.45;
+  letter-spacing: 1px;
+  background-color: #fff;
+  color: $color-dark-grey;
+}
+
+// *---------------------------------------------- LAYOUT -----------------------------------------------------------------------* //
+
+.header {
+  display: flex;
+  background-color: $color-light-grey;
+  color: $color-dark-grey;
+
+  & > * {
+    padding: 2rem;
+    @include flexbox();
+  }
+
+  &__heading {
+    flex: 1;
+    margin-left: 18rem;
+  }
+
+  &__level-box {
+    width: 20rem;
+    background-color: $color-dark-grey;
+  }
+
+  &__level,
+  &__level-no {
+    text-transform: uppercase;
+    font-size: 3rem;
+    font-weight: bolder;
+    letter-spacing: 2px;
+    color: $color-light-grey;
+  }
+}
+
+.main {
+  @include flexbox();
+  height: calc(95vh - 10rem);
+
+  &__main-box {
+    @include flexbox();
+    min-width: 75%;
+    flex-direction: column;
+    // min-height: 50rem;
+    // background-color: $color-red;
+  }
+}
+
+.footer {
+  @include flexbox();
+
+  &__credit {
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    font-family: $primary-font;
+  }
+}
+
+// *---------------------------------------------- COMPONENTS -----------------------------------------------------------------------* //
+.guess-box {
+  display: flex;
+  justify-content: space-between;
+  max-width: 100%;
+  padding: 1.5rem;
+
+  &__word {
+    @include flexbox();
+    @include word-styling(10rem, $color-green, #fff);
+    position: relative;
+    cursor: pointer;
+
+    &--yellow {
+      @include different-color-word($color-yellow);
+    }
+
+    &--delete {
+      @include flexbox();
+      font-size: 1.4rem;
+      font-family: $secondary-font;
+      position: absolute;
+      background-color: $color-red;
+      border-radius: 50%;
+      top: 0;
+      right: -1rem;
+      transform: translate(-25%, -50%);
+      width: 2.5rem;
+      height: 2.5rem;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s;
+    }
+
+    &:hover &--delete {
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  &__empty {
+    @include word-styling(8rem, $color-light-grey, none);
+    align-self: center;
+  }
+}
+
+.option-box {
+  margin-top: 4rem;
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem;
+
+  &__word {
+    @include flexbox();
+    @include word-styling(12rem, $color-dark-grey, $color-light-grey);
+    cursor: pointer;
+
+    &--dark-grey {
+      @include different-color-word($color-dark-grey);
+      color: #fff;
+    }
+  }
+
+  &__empty {
+    @include word-styling(12rem, $color-light-grey, none);
+    align-self: center;
+  }
+}
+
+.hint {
+  box-shadow: $common-box-shadow;
+  border-radius: 1rem;
+  background-color: $color-green;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 2rem;
+  font-family: $primary-font;
+  letter-spacing: 1px;
+  margin-top: 5rem;
+  text-decoration: none;
+  text-transform: uppercase;
+  padding: 1.5rem 3rem;
+}
+
+// *---------------------------------------------- TYPOGRAPHY -----------------------------------------------------------------------* //
+
+.heading-1 {
+  font-size: 4rem;
+  font-family: $primary-font;
+  letter-spacing: 2px;
+}
+
+// *---------------------------------------------- UTILITY CLASSES -----------------------------------------------------------------------* //
+
+.u-hidden {
+  display: none;
+}
+
+.u-visible {
+  display: block;
+}
