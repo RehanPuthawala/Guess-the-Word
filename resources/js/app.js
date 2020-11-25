@@ -20,6 +20,8 @@
 const optionBox = document.querySelector(".option-box");
 const guessBox = document.querySelector(".guess-box");
 
+// *---------------------------------------------- Global Variables -----------------------------------------------------------------------* //
+
 const words = [
   "Rehan",
   "Aadil",
@@ -30,11 +32,18 @@ const words = [
   "Riyaz",
   "Kulsum",
   "Programmer",
+  "Coder",
+  "JavaScript",
+  "CSS",
 ];
 
 const randomWord = words[Math.trunc(Math.random() * words.length)];
 let randomWordArr = randomWord.split("");
 let randomWordArrCopy = [...randomWordArr];
+let userGuessedWordArr = Array(randomWordArr.length).fill(null);
+
+// *---------------------------------------------- Functions  -----------------------------------------------------------------------* //
+
 function shuffleArr(arr, times, arrCopy) {
   if (times !== arr.length) {
     let firstRandomNum =
@@ -50,7 +59,7 @@ function shuffleArr(arr, times, arrCopy) {
     times++;
 
     JSON.stringify(randomWordArr) === JSON.stringify(arrCopy)
-      ? shuffleArr(randomWordArr, 0)
+      ? shuffleArr(randomWordArr, 0, randomWordArrCopy)
       : shuffleArr(randomWordArr, times, randomWordArrCopy);
   }
 
@@ -69,6 +78,7 @@ function createBoxes() {
 
     let boxOfGuess = document.createElement("div");
     boxOfGuess.classList.add(`guess-box__empty`);
+    boxOfGuess.classList.add(`guess-box__word--${i + 1}`);
     boxOfGuess.innerHTML = `<span class="guess-box__word--delete">x</span>`;
     guessBox.appendChild(boxOfGuess);
   }
@@ -78,18 +88,37 @@ createBoxes();
 const addGuessedWord = (e) => {
   if (e.target.classList.contains("option-box__word")) {
     let userGuessedElement = e.target;
-    let userIdClass = userGuessedElement.id;
+    let userID = userGuessedElement.id;
     let userGuessedWord = userGuessedElement.textContent;
+
+    // Push User Guessed Word to User Guessed Word Arr;
+    userGuessedWordArr[userGuessedWordArr.indexOf(null)] = userGuessedWord;
+
+    // Removing Content and Classes
     userGuessedElement.classList.remove("option-box__word");
     userGuessedElement.classList.add("option-box__empty");
+
     userGuessedElement.textContent = "";
 
     let firstEmptyCell = document.querySelector(".guess-box__empty");
-    firstEmptyCell.classList.remove("guess-box__empty");
-    firstEmptyCell.classList.add("guess-box__word");
-    firstEmptyCell.id = userIdClass;
+
+    // Modifying Inner HTML
     firstEmptyCell.innerHTML = "";
     firstEmptyCell.innerHTML = `<span class="guess-box__word--delete ">x</span> ${userGuessedWord}`;
+
+    // Removing Classes
+    firstEmptyCell.classList.remove("guess-box__empty");
+    firstEmptyCell.classList.add("guess-box__word");
+
+    // Setting IDs
+    firstEmptyCell.id = userID;
+
+    // Checking If User Submitted  Guess
+    !userGuessedWordArr.filter((value) => !value).length
+      ? userGuessedWordArr.join("") === randomWordArrCopy.join("")
+        ? console.log("Congratulations You Won !")
+        : console.log("Bad Luck ! Next Time")
+      : "";
   }
 };
 
@@ -97,9 +126,14 @@ const removeGuessedWord = (e) => {
   if (e.target.classList.contains("guess-box__word--delete")) {
     let userDeletedElement = e.target.parentElement;
     let userDeletedElementId = userDeletedElement.id;
+    let userDeletedWordIdx =
+      Number(userDeletedElement.classList[0].split("--")[1]) - 1;
+
+    // Deleting Word From User Guessed Word Arr
+    userGuessedWordArr.splice(userDeletedWordIdx, 1, null);
 
     userDeletedElement.classList.remove("guess-box__word");
-    userDeletedElement.classList.remove(userDeletedElementId);
+    userDeletedElement.id = "";
 
     userDeletedElement.innerHTML = "";
     userDeletedElement.classList.add("guess-box__empty");
@@ -114,6 +148,8 @@ const resetGuessedWord = (id) => {
   position.classList.add("option-box__word");
   position.textContent = randomWordArr[Number(id.split("--")[1]) - 1];
 };
+
+const showWinningMessage = () => {};
 
 optionBox.addEventListener("click", addGuessedWord);
 guessBox.addEventListener("click", removeGuessedWord);
