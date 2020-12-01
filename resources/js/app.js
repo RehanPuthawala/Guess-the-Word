@@ -10,7 +10,7 @@
  [X] Also Create empty boxes(word.length) and put them in guess boxes
  [X] Add Event Listener to Delete Button
   [X] remove that element from userGuess box
-  [] add taht element to its approapriate position in option box
+  [X] add taht element to its approapriate position in option box
 
 
  [] Once User Guessed All the Word Check if right turn all word into green else turn all elements into red 
@@ -19,10 +19,14 @@
 // *---------------------------------------------- DOM Element Selection -----------------------------------------------------------------------* //
 const optionBox = document.querySelector(".option-box");
 const guessBox = document.querySelector(".guess-box");
+const winOverlay = document.querySelector(".win-overlay");
+const nextLevelPlaceholder = document.querySelector(".win-overlay__next");
+const loseOverlay = document.querySelector(".lose-overlay");
+const levelPlaceholder = document.querySelector(".header__level-no");
 
 // *---------------------------------------------- Global Variables -----------------------------------------------------------------------* //
 
-const words = [
+let words = [
   "Rehan",
   "Aadil",
   "Zaid",
@@ -37,10 +41,11 @@ const words = [
   "CSS",
 ];
 
-const randomWord = words[Math.trunc(Math.random() * words.length)];
-let randomWordArr = randomWord.split("");
-let randomWordArrCopy = [...randomWordArr];
-let userGuessedWordArr = Array(randomWordArr.length).fill(null);
+let randomWord;
+let randomWordArr;
+let randomWordArrCopy;
+let userGuessedWordArr;
+let level = 1;
 
 // *---------------------------------------------- Functions  -----------------------------------------------------------------------* //
 
@@ -66,8 +71,6 @@ function shuffleArr(arr, times, arrCopy) {
   return arr;
 }
 
-randomWordArr = shuffleArr(randomWordArr, 0, randomWordArrCopy);
-
 function createBoxes() {
   for (let i = 0; i < randomWordArr.length; i++) {
     let boxOfOption = document.createElement("div");
@@ -83,7 +86,6 @@ function createBoxes() {
     guessBox.appendChild(boxOfGuess);
   }
 }
-createBoxes();
 
 const addGuessedWord = (e) => {
   if (e.target.classList.contains("option-box__word")) {
@@ -116,8 +118,8 @@ const addGuessedWord = (e) => {
     // Checking If User Submitted  Guess
     !userGuessedWordArr.filter((value) => !value).length
       ? userGuessedWordArr.join("") === randomWordArrCopy.join("")
-        ? console.log("Congratulations You Won !")
-        : console.log("Bad Luck ! Next Time")
+        ? winOrLose(true)
+        : winOrLose(false)
       : "";
   }
 };
@@ -149,7 +151,48 @@ const resetGuessedWord = (id) => {
   position.textContent = randomWordArr[Number(id.split("--")[1]) - 1];
 };
 
-const showWinningMessage = () => {};
+const winOrLose = (condition) => {
+  if (condition) {
+    winOverlay.classList.remove("u-hidden");
+    winOverlay.classList.add("u-visible");
 
-optionBox.addEventListener("click", addGuessedWord);
-guessBox.addEventListener("click", removeGuessedWord);
+    nextLevelPlaceholder.addEventListener("click", () => {
+      nextLevel(randomWord);
+    });
+  } else {
+    Array.prototype.forEach.call(
+      guessBox.children,
+      (element) => (element.style.backgroundColor = "#a30101")
+    );
+
+    setTimeout(() => {
+      loseOverlay.classList.remove("u-hidden");
+      loseOverlay.classList.add("u-visible");
+    }, 1500);
+  }
+};
+
+const nextLevel = (word) => {
+  winOverlay.classList.remove("u-visible");
+  winOverlay.classList.add("u-hidden");
+  level++;
+  words.splice(words.indexOf(word), 1);
+  init();
+};
+
+const init = () => {
+  randomWord = words[Math.trunc(Math.random() * words.length)];
+  randomWordArr = randomWord.split("");
+  randomWordArrCopy = [...randomWordArr];
+  userGuessedWordArr = Array(randomWordArr.length).fill(null);
+
+  levelPlaceholder.textContent = level;
+  randomWordArr = shuffleArr(randomWordArr, 0, randomWordArrCopy);
+  createBoxes();
+  optionBox.addEventListener("click", addGuessedWord);
+  guessBox.addEventListener("click", removeGuessedWord);
+};
+
+init();
+
+// *---------------------------------------------- Event Handlers  -----------------------------------------------------------------------* //
