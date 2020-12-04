@@ -13,7 +13,7 @@
   [X] add taht element to its approapriate position in option box
 
 
- [] Once User Guessed All the Word Check if right turn all word into green else turn all elements into red 
+ [X] Once User Guessed All the Word Check if right turn all word into green else turn all elements into red 
 */
 
 // *---------------------------------------------- DOM Element Selection -----------------------------------------------------------------------* //
@@ -173,22 +173,38 @@ const winOrLose = (condition) => {
 };
 
 const nextLevel = (word) => {
+  //Showing Winning Overlay
   winOverlay.classList.remove("u-visible");
   winOverlay.classList.add("u-hidden");
+
+  // Increasing Level
   level++;
+
+  //Deleting Completed Word from Words
   words.splice(words.indexOf(word), 1);
+
+  //Go to Inital Stage with Modified Changes
   init();
 };
 
 const init = () => {
+  //Declaring INitial Global Variables
   randomWord = words[Math.trunc(Math.random() * words.length)];
   randomWordArr = randomWord.split("");
   randomWordArrCopy = [...randomWordArr];
   userGuessedWordArr = Array(randomWordArr.length).fill(null);
-
   levelPlaceholder.textContent = level;
   randomWordArr = shuffleArr(randomWordArr, 0, randomWordArrCopy);
+
+  //Clearing InneHTML of DOM
+  optionBox.innerHTML = "";
+  guessBox.innerHTML = "";
+
+  //Creating Empty boxes
   createBoxes();
+
+  //Adding Event Listeners
+
   optionBox.addEventListener("click", addGuessedWord);
   guessBox.addEventListener("click", removeGuessedWord);
 };
