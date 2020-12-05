@@ -207,7 +207,8 @@ body {
 }
 
 .win-overlay,
-.lose-overlay {
+.lose-overlay,
+.finish-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -243,7 +244,8 @@ body {
   }
 }
 
-.win-overlay {
+.win-overlay,
+.finish-overlay {
   background-color: $color-green;
 }
 .lose-overlay {

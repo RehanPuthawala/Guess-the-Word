@@ -1,21 +1,3 @@
-// TODO :
-/*
- [X] Create Random Words Arr  
- [X] Randomly Choose Word 
- [X] shuffle the word
- [X] Create boxes(word.length) and put them in option boxes
- [X] Assign Event Listener to it
- [X] Put clicked word into first empty box in guess boxes
- [X] Clear that clicked element from option boxes
- [X] Also Create empty boxes(word.length) and put them in guess boxes
- [X] Add Event Listener to Delete Button
-  [X] remove that element from userGuess box
-  [X] add taht element to its approapriate position in option box
-
-
- [X] Once User Guessed All the Word Check if right turn all word into green else turn all elements into red 
-*/
-
 // *---------------------------------------------- DOM Element Selection -----------------------------------------------------------------------* //
 const optionBox = document.querySelector(".option-box");
 const guessBox = document.querySelector(".guess-box");
@@ -23,22 +5,24 @@ const winOverlay = document.querySelector(".win-overlay");
 const nextLevelPlaceholder = document.querySelector(".win-overlay__next");
 const loseOverlay = document.querySelector(".lose-overlay");
 const levelPlaceholder = document.querySelector(".header__level-no");
+const finishOverlay = document.querySelector(".finish-overlay");
+const restartPlaceholders = document.querySelectorAll(
+  ".finish-overlay__restart"
+);
 
 // *---------------------------------------------- Global Variables -----------------------------------------------------------------------* //
 
 let words = [
-  "Rehan",
-  "Aadil",
-  "Zaid",
-  "Moin",
-  "Matin",
-  "Nabil",
-  "Riyaz",
-  "Kulsum",
-  "Programmer",
-  "Coder",
+  "Assembly",
+  "C#",
+  "C++",
+  "Java",
   "JavaScript",
+  "Python",
+  "Rust",
+  "Perl",
   "CSS",
+  "HTML",
 ];
 
 let randomWord;
@@ -51,21 +35,19 @@ let level = 1;
 
 function shuffleArr(arr, times, arrCopy) {
   if (times !== arr.length) {
-    let firstRandomNum =
-      randomWordArr[Math.trunc(Math.random() * randomWordArr.length)];
-    let secondRandomNum =
-      randomWordArr[Math.trunc(Math.random() * randomWordArr.length)];
+    let firstRandomNum = Math.trunc(Math.random() * arr.length);
+    let secondRandomNum = Math.trunc(Math.random() * arr.length);
 
-    [arr[arr.indexOf(firstRandomNum)], arr[arr.indexOf(secondRandomNum)]] = [
-      arr[arr.indexOf(secondRandomNum)],
-      arr[arr.indexOf(firstRandomNum)],
+    [arr[firstRandomNum], arr[secondRandomNum]] = [
+      arr[secondRandomNum],
+      arr[firstRandomNum],
     ];
 
     times++;
 
-    JSON.stringify(randomWordArr) === JSON.stringify(arrCopy)
-      ? shuffleArr(randomWordArr, 0, randomWordArrCopy)
-      : shuffleArr(randomWordArr, times, randomWordArrCopy);
+    JSON.stringify(arr) === JSON.stringify(arrCopy)
+      ? shuffleArr(randomWordArr, 0, arrCopy)
+      : shuffleArr(arr, times, arrCopy);
   }
 
   return arr;
@@ -155,10 +137,6 @@ const winOrLose = (condition) => {
   if (condition) {
     winOverlay.classList.remove("u-hidden");
     winOverlay.classList.add("u-visible");
-
-    nextLevelPlaceholder.addEventListener("click", () => {
-      nextLevel(randomWord);
-    });
   } else {
     Array.prototype.forEach.call(
       guessBox.children,
@@ -183,8 +161,16 @@ const nextLevel = (word) => {
   //Deleting Completed Word from Words
   words.splice(words.indexOf(word), 1);
 
-  //Go to Inital Stage with Modified Changes
-  init();
+  if (words.length) {
+    init();
+  } else {
+    finishOverlay.classList.remove("u-hidden");
+    finishOverlay.classList.add("u-visible");
+  }
+};
+
+const restart = () => {
+  location.reload();
 };
 
 const init = () => {
@@ -203,12 +189,26 @@ const init = () => {
   //Creating Empty boxes
   createBoxes();
 
-  //Adding Event Listeners
+  //Removing Event Listeners
+  nextLevelPlaceholder.removeEventListener(
+    "click",
+    () => {
+      nextLevel(randomWord);
+    },
+    false
+  );
 
+  //Adding Event Listeners
   optionBox.addEventListener("click", addGuessedWord);
   guessBox.addEventListener("click", removeGuessedWord);
+
+  restartPlaceholders.forEach((restartBtn) =>
+    restartBtn.addEventListener("click", restart)
+  );
 };
 
-init();
+nextLevelPlaceholder.addEventListener("click", () => {
+  nextLevel(randomWord);
+});
 
-// *---------------------------------------------- Event Handlers  -----------------------------------------------------------------------* //
+init();
